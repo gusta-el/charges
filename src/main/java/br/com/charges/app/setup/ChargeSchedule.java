@@ -41,7 +41,7 @@ public class ChargeSchedule {
     	
     	List<String> toAddressesTo = debtors.map(Debtorable::getEmail).collect(Collectors.toList());
     	
-     	EmailContent emailContent = new EmailContent(toAddressesTo, null, null, "BITCH BETTER HAVE MY MONEY!", "Me paga logo calotera!");
+     	EmailContent emailContent = new EmailContent(toAddressesTo, null, null, null, "BITCH BETTER HAVE MY MONEY!", "Me paga logo calotera!");
      	EmailProperties emailProperties = new EmailProperties(EmailPropertiesConstants.LIVE.getHost(), EmailPropertiesConstants.LIVE.getPort(), emailAdress, emailPassword);
     	
     	EmailSenderManager emailSenderManager = new EmailSenderManager();
