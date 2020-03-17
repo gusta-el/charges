@@ -25,7 +25,6 @@ public class DebtorServiceImpl implements DebtorService{
 	public List<DebtorDTO> getAll() {
 		
 		Iterable<Debtor> debtors = debtorRepository.findAll();
-
 		return this.execute(StreamSupport.stream(debtors.spliterator(), true));
 		
 	}
@@ -37,24 +36,59 @@ public class DebtorServiceImpl implements DebtorService{
 	}
 
 	@Override
-	public Optional<DebtorDTO> getById(Long id) {
-		// TODO Auto-generated method stub
+	public DebtorDTO getById(Long id) {
+		Optional<Debtor> opDebtor = debtorRepository.findById(id);
+		
+		if(opDebtor.isPresent()) {
+			return this.extractDebtor(opDebtor.get());
+		}
+		
 		return null;
+	
 	}
 
 	@Override
-	public void addDebtor(DebtorValue debtor) {
-		// TODO Auto-generated method stub
+	public DebtorDTO addDebtor(DebtorValue debtor) {
+
+		Debtor debtorEntity = Debtor.builder()
+				.debtorEmail(debtor.getDebtorEmail())
+				.debtorName(debtor.getDebtorName())
+				.debtorNick(debtor.getDebtorNick())
+				.build();
+		
+		debtorEntity = debtorRepository.save(debtorEntity);
+		
+		return this.extractDebtor(debtorEntity);
+				
+	}
+
+	@Override
+	public DebtorDTO changeDebtor(DebtorValue debtorValue) {
+
+		Optional<Debtor> opDebtor = debtorRepository.findById(debtorValue.getDebtorId());
+		
+		opDebtor.ifPresent(debtor -> {
+			debtor.setDebtorEmail(debtorValue.getDebtorEmail());
+			debtor.setDebtorName(debtorValue.getDebtorName());
+			debtor.setDebtorNick(debtorValue.getDebtorNick());
+			debtor = debtorRepository.save(debtor);
+		});
+				
+		if(opDebtor.isPresent()) {
+			return this.extractDebtor(opDebtor.get());
+		}
+		
+		return null;
 		
 	}
 
 	private List<DebtorDTO> execute(Stream<Debtor> debtors) {
 		
-		return debtors.map(this::extractDebtors).collect(Collectors.toList());
+		return debtors.map(this::extractDebtor).collect(Collectors.toList());
 		
 	}
 	
-	private DebtorDTO extractDebtors(Debtor debtor) {
+	private DebtorDTO extractDebtor(Debtor debtor) {
 		
 		return DebtorDTO.builder()
 				.debtorName(debtor.getDebtorName())
@@ -63,8 +97,5 @@ public class DebtorServiceImpl implements DebtorService{
 				.debtorId(debtor.getDebtorId())
 				.build();
 	}
-	
-	
-	
 	
 }
