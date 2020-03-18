@@ -41,28 +41,32 @@ public class ChargeSchedule {
 
 		Stream<Debtorable> debtors = chargesService.execute();
 		debtors.forEach(debtor -> {
+			if(!debtor.getDebts().isEmpty()) {	
+				sendMessage(debtor, emailProperties, emailSenderManager);
+				System.out.println("Enviado para " + debtor.getEmail());
+			}
+		});
 
-			String toAddresTo = debtor.getEmail();
-			String nickName = debtor.getDebtorNick();
+	}
+	
+	private void sendMessage(Debtorable debtor, EmailProperties emailProperties, EmailSenderManager emailSenderManager) {
+		
+		String toAddresTo = debtor.getEmail();
+		String nickName = debtor.getDebtorNick();
 
-			final StringBuilder message = new StringBuilder();
-			message.append(nickName + ChargesUtils.BODY_MESSAGE);
+		final StringBuilder message = new StringBuilder();
+		message.append(nickName + ChargesUtils.BODY_MESSAGE);
 
-			debtor.getDebts().forEach(debt -> message.append(this.extractDebt(debt) + "\n"));
+		debtor.getDebts().forEach(debt -> message.append(this.extractDebt(debt) + "\n"));
 
-			EmailContent emailContent = new EmailContent(null, null, null, toAddresTo, ChargesUtils.SUJECT_MESSAGE,
-					message.toString());
+		EmailContent emailContent = new EmailContent(null, null, null, toAddresTo, ChargesUtils.SUJECT_MESSAGE,
+				message.toString());
 
 			try {
 				emailSenderManager.send(emailProperties, emailContent);
 			} catch (MessagingException e) {
 				e.printStackTrace();
 			}
-
-			System.out.println("Enviado para " + debtor.getEmail());
-
-		});
-
 	}
 
 	private String extractDebt(Debtable debt) {
