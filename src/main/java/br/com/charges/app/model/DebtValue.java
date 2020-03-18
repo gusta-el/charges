@@ -20,6 +20,6 @@ public class DebtValue {
 	Date dateDebt;
 	Boolean paid;
 	Boolean sendable;
-	
+	Long debtorId;	
 	
 }

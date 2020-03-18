@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,6 +50,7 @@ public class DebtorServiceImpl implements DebtorService{
 	}
 
 	@Override
+	@Transactional
 	public DebtorDTO addDebtor(DebtorValue debtor) {
 
 		Debtor debtorEntity = Debtor.builder()
@@ -63,6 +66,7 @@ public class DebtorServiceImpl implements DebtorService{
 	}
 
 	@Override
+	@Transactional
 	public DebtorDTO changeDebtor(DebtorValue debtorValue) {
 
 		Optional<Debtor> opDebtor = debtorRepository.findById(debtorValue.getDebtorId());

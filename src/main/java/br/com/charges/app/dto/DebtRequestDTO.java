@@ -15,11 +15,11 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DebtRequestDTO {
 
-	Long debtId;
 	String description;
 	BigDecimal moneyValue;
 	Date dateDebt;
 	Boolean paid;
 	Boolean sendable;
+	Long debtorId;
 	
 }

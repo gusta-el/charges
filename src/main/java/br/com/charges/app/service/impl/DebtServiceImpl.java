@@ -6,18 +6,28 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import br.com.charges.app.dto.DebtDTO;
+import br.com.charges.app.dto.DebtorDTO;
 import br.com.charges.app.entity.Debt;
+import br.com.charges.app.entity.Debtor;
 import br.com.charges.app.model.DebtValue;
 import br.com.charges.app.repository.DebtRepository;
+import br.com.charges.app.repository.DebtorRepository;
 import br.com.charges.app.service.DebtService;
 
+@Service
 public class DebtServiceImpl implements DebtService{
 
 	@Autowired
 	DebtRepository debtRepository;
+
+	@Autowired
+	DebtorRepository debtorRepository;
 	
 	@Override
 	public List<DebtDTO> getAll() {
@@ -32,22 +42,53 @@ public class DebtServiceImpl implements DebtService{
 	}
 
 	@Override
-	public DebtDTO addDebt(DebtValue debt) {
+	public List<DebtorDTO> getDebtsByDebtorName(String name) {
+		
+		Iterable<Debtor> debtors = debtorRepository.findBydebtorName(name);
+		Stream<Debtor> debtorsStream = StreamSupport.stream(debtors.spliterator(), true);
+		
+		return debtorsStream.map(this::extractDebtorWithDebts).collect(Collectors.toList());
+	
+	}
+	
 
-		Debt debtEntity = Debt.builder()
-				.dateDebt(debt.getDateDebt())
-				.description(debt.getDescription())
-				.moneyValue(debt.getMoneyValue())
-				.paid(debt.getPaid())
-				.sendable(debt.getSendable())
-				.build();
+	private DebtorDTO extractDebtorWithDebts(Debtor debtor) {
+			
+		Iterable<Debt> debts = debtRepository.findByDebtor(debtor);
+		Stream<Debt> debtsStream = StreamSupport.stream(debts.spliterator(), true);
 		
-		debtEntity = debtRepository.save(debtEntity);
+		return DebtorDTO.builder()
+					.debtorId(debtor.getDebtorId())
+					.debtorName(debtor.getDebtorName())
+					.debtorNick(debtor.getDebtorNick())
+					.debtsDto(debtsStream.map(this::extractDebt).collect(Collectors.toSet()))
+					.build();
 		
-		return this.extractDebt(debtEntity);	
+	}
+	
+	@Override
+	@Transactional
+	public DebtDTO addDebt(DebtValue debtValue) {
+	
+		Optional<Debtor> opDebtor = debtorRepository.findById(debtValue.getDebtorId());
+			
+		if(opDebtor.isPresent()) {
+			Debt debtEntity = Debt.builder()
+					.dateDebt(debtValue.getDateDebt())
+					.description(debtValue.getDescription())
+					.moneyValue(debtValue.getMoneyValue())
+					.paid(debtValue.getPaid())
+					.sendable(debtValue.getSendable())
+					.debtor(opDebtor.get())
+					.build();
+			debtEntity = debtRepository.save(debtEntity);
+			return this.extractDebt(debtEntity);
+		}
+		return null;
 	}
 
 	@Override
+	@Transactional
 	public DebtDTO changeDebt(DebtValue debtValue) {
 
 		Optional<Debt> opDebt = debtRepository.findById(debtValue.getDebtId());

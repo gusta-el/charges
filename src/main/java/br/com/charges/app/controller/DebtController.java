@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.charges.app.dto.DebtDTO;
 import br.com.charges.app.dto.DebtRequestDTO;
+import br.com.charges.app.dto.DebtorDTO;
 import br.com.charges.app.model.DebtValue;
 import br.com.charges.app.service.DebtService;
 
@@ -36,11 +37,20 @@ public class DebtController {
 		return ResponseEntity.ok(debts);
     }
 	
-	@GetMapping(value="/debts-by-")
+	@GetMapping(value="/debts-by")
     @ResponseBody
     public ResponseEntity<List<DebtDTO>> listDebtorsByName(@RequestParam Boolean paid) {
 		
 		List<DebtDTO> debts = debtService.getPaidDebts(paid);
+		
+		return ResponseEntity.ok(debts);
+    }
+	
+	@GetMapping(value="/debts-by-name/{name}")
+    @ResponseBody
+    public ResponseEntity<List<DebtorDTO>> listDebtsByName(@PathVariable("name") String name) {
+		
+		List<DebtorDTO> debts = debtService.getDebtsByDebtorName(name);
 		
 		return ResponseEntity.ok(debts);
     }
@@ -58,7 +68,7 @@ public class DebtController {
 
 	@PatchMapping(value="/debts/{id}")
     @ResponseBody
-    public ResponseEntity<DebtDTO> addDebtor(@PathVariable("id") Long id, @RequestBody DebtRequestDTO debt) {
+    public ResponseEntity<DebtDTO> changeDebtor(@PathVariable("id") Long id, @RequestBody DebtRequestDTO debt) {
 		
 		DebtValue debtValue = this.transform(debt, id);
 		DebtDTO debtDto = debtService.changeDebt(debtValue);
@@ -67,7 +77,7 @@ public class DebtController {
     
 	}
 	
-	private DebtValue transform(DebtRequestDTO debt, Long id) {
+	private DebtValue transform(DebtRequestDTO debt, Long debtId) {
 		
 		return DebtValue.builder()
 				.dateDebt(debt.getDateDebt())
@@ -75,7 +85,8 @@ public class DebtController {
 				.moneyValue(debt.getMoneyValue())
 				.paid(debt.getPaid())
 				.sendable(debt.getSendable())
-				.debtId(Objects.nonNull(id)? id : null)
+				.debtorId(debt.getDebtorId())
+				.debtId(Objects.nonNull(debtId)? debtId : null)
 				.build();
 		
 	}

@@ -1,7 +1,6 @@
 package br.com.charges.app.setup;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Calendar;
 import java.util.stream.Stream;
 
 import javax.mail.MessagingException;
@@ -18,36 +17,87 @@ import com.emailSender.app.model.EmailProperties;
 import com.emailSender.app.model.EmailPropertiesConstants;
 
 import br.com.charges.app.model.Debtorable;
+import br.com.charges.app.model.Debtorable.Debtable;
 import br.com.charges.app.service.ChargesService;
-	
+import br.com.charges.app.utils.ChargesUtils;
+
 @Configuration
 @EnableScheduling
 public class ChargeSchedule {
 
 	@Autowired
 	ChargesService chargesService;
-	
+
 	@Value("${email.adress}")
 	String emailAdress;
-	
+
 	@Value("${email.password}")
 	String emailPassword;
+
+	@Scheduled(cron = "0,30 0-59 * * * ?")
+	public void charge() {
+
+		EmailProperties emailProperties = new EmailProperties(EmailPropertiesConstants.LIVE.getHost(),
+				EmailPropertiesConstants.LIVE.getPort(), emailAdress, emailPassword);
+		EmailSenderManager emailSenderManager = new EmailSenderManager();
+
+		Stream<Debtorable> debtors = chargesService.execute();
+		debtors.forEach(debtor -> {
+
+			String toAddresTo = debtor.getEmail();
+			String nickName = debtor.getDebtorNick();
+
+			final StringBuilder message = new StringBuilder();
+			message.append(nickName + ChargesUtils.BODY_MESSAGE);
+
+			debtor.getDebts().forEach(debt -> message.append(this.extractDebt(debt) + "\n"));
+
+			EmailContent emailContent = new EmailContent(null, null, null, toAddresTo, ChargesUtils.SUJECT_MESSAGE,
+					message.toString());
+
+			try {
+				emailSenderManager.send(emailProperties, emailContent);
+			} catch (MessagingException e) {
+				e.printStackTrace();
+			}
+
+			System.out.println("Enviado para " + debtor.getEmail());
+
+		});
+
+	}
+
+	private String extractDebt(Debtable debt) {
+    	
+    	StringBuilder debtMessage = new StringBuilder();
+    	
+    	String moneyValue = "R$ " + debt.getMoneyValue().toString();
+    	moneyValue = moneyValue.replace('.', ',');
+    
+    	Calendar dateDebt = Calendar.getInstance();
+    	dateDebt.setTime(debt.getDateDebt());
+		String dateValue = verifyLessthanTenthDay(dateDebt.get(Calendar.DAY_OF_MONTH))
+				+ "/" + verifyLessthanTenthDay(dateDebt.get(Calendar.MONTH)+1) 
+				+ "/" + dateDebt.get(Calendar.YEAR) + "\n";
+    	
+		debtMessage.append(moneyValue);
+		debtMessage.append(" referente a ");
+		debtMessage.append(debt.getDescription());
+		debtMessage.append(" do dia ");
+		debtMessage.append(dateValue);
 		
-    @Scheduled(cron = "0 0 9 1 * ?")
-    public void charge() throws MessagingException{
+    	return debtMessage.toString();
     	
-    	Stream<Debtorable> debtors = chargesService.execute();
-    	
-    	
-    	List<String> toAddressesTo = debtors.map(Debtorable::getEmail).collect(Collectors.toList());
-    	
-     	EmailContent emailContent = new EmailContent(toAddressesTo, null, null, null, "BITCH BETTER HAVE MY MONEY!", "Me paga logo calotera!");
-     	EmailProperties emailProperties = new EmailProperties(EmailPropertiesConstants.LIVE.getHost(), EmailPropertiesConstants.LIVE.getPort(), emailAdress, emailPassword);
-    	
-    	EmailSenderManager emailSenderManager = new EmailSenderManager();
-    	emailSenderManager.send(emailProperties, emailContent);
-    	    	
-        System.out.println("Enviei...");
     }
-		
+
+	private String verifyLessthanTenthDay(int day) {
+
+		if (day >= 10) {
+			return "" + day;
+		} else {
+			return "0" + day;
+		}
+
+	}
+
 }

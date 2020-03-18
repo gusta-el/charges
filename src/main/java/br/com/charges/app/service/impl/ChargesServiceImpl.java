@@ -29,7 +29,7 @@ public class ChargesServiceImpl implements ChargesService{
 	public Stream<Debtorable> execute() {
 		
 		Iterable<Debtor> debtors = debtorRepository.findAll();
-		return this.execute(StreamSupport.stream(debtors.spliterator(), true));
+		return this.execute(StreamSupport.stream(debtors.spliterator(), false));
 
 	}
 	
