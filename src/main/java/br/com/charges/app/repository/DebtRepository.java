@@ -6,6 +6,6 @@ import br.com.charges.app.entity.Debt;
 
 public interface DebtRepository extends CrudRepository<Debt, Long>{
 
-	Iterable<Debt> findByPaidAndSendable(boolean paid, boolean sendable);
+	Iterable<Debt> findByPaid(boolean paid);
 	
 }
