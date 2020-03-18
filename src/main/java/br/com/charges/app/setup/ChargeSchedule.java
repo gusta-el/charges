@@ -11,13 +11,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import com.emailSender.app.EmailSenderManager;
-import com.emailSender.app.model.EmailContent;
-import com.emailSender.app.model.EmailProperties;
-import com.emailSender.app.model.EmailPropertiesConstants;
-
 import br.com.charges.app.model.Debtorable;
 import br.com.charges.app.model.Debtorable.Debtable;
+import br.com.charges.app.model.EmailContent;
+import br.com.charges.app.model.EmailProperties;
+import br.com.charges.app.model.EmailPropertiesConstants;
 import br.com.charges.app.service.ChargesService;
 import br.com.charges.app.utils.ChargesUtils;
 
