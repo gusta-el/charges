@@ -45,7 +45,7 @@ public class ChargeSchedule {
 
 		Stream<Debtorable> debtors = chargesService.execute();
 		debtors.forEach(debtor -> {
-			if(!debtor.getDebts().isEmpty()) {	
+			if(debtor.getDebts().isEmpty()) {	
 				sendMessage(debtor, emailProperties, emailSenderManager);
 				System.out.println("Enviado para " + debtor.getEmail());
 			}
