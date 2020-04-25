@@ -17,14 +17,18 @@ public class TestController {
 	@Value("${spring.datasource.url}")
 	String dataSource;
 	
+	@Value("${teste.url}")
+	String dataSource2;
+	
 	@GetMapping
     @ResponseBody
     public String validate() {
 		
 		String validate = "emailAdress: " + emailAdress + "\n"
 				+ "emailPassword: " + emailPassword + "\n"
-				+ "dataSource: " + dataSource; 
-				
+				+ "dataSource: " + dataSource + "\n" 
+				+ "dataSourceJade: " + dataSource2 + "\n"; 
+		
 		return validate;
     }
 	
