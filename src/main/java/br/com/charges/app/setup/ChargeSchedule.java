@@ -46,7 +46,10 @@ public class ChargeSchedule {
 		Stream<Debtorable> debtors = chargesService.execute();
 		debtors.forEach(debtor -> {
 			if(debtor.getDebts().isEmpty()) {	
-				sendMessage(debtor, emailProperties, emailSenderManager);
+				//sendMessage(debtor, emailProperties, emailSenderManager);
+				
+				sendMessage(Debtorable.builder().email("gcabrerac@live.com").debtorNick("Gusta").build(), emailProperties, emailSenderManager);
+				
 				System.out.println("Enviado para " + debtor.getEmail());
 			}
 		});
@@ -66,7 +69,7 @@ public class ChargeSchedule {
 		final StringBuilder message = new StringBuilder();
 		message.append(nickName + ChargesUtils.BODY_MESSAGE);
 
-		debtor.getDebts().forEach(debt -> message.append(this.extractDebt(debt) + "\n"));
+		//debtor.getDebts().forEach(debt -> message.append(this.extractDebt(debt) + "\n"));
 
 		EmailContent emailContent = new EmailContent(null, null, null, toAddresTo, ChargesUtils.SUJECT_MESSAGE,
 				message.toString());
