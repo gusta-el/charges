@@ -17,7 +17,7 @@ public class TestController {
 	@Value("${spring.datasource.url}")
 	String dataSource;
 	
-	@Value("${teste.url}")
+	@Value("${teste.datasource}")
 	String dataSource2;
 	
 	@GetMapping
