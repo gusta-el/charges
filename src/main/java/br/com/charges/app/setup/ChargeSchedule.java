@@ -43,16 +43,14 @@ public class ChargeSchedule {
 				EmailPropertiesConstants.LIVE.getPort(), emailAdress, emailPassword);
 		EmailSenderManager emailSenderManager = new EmailSenderManager();
 
-		Stream<Debtorable> debtors = chargesService.execute();
-		debtors.forEach(debtor -> {
-			if(debtor.getDebts().isEmpty()) {	
-				//sendMessage(debtor, emailProperties, emailSenderManager);
+		//Stream<Debtorable> debtors = chargesService.execute();
+		
+		//sendMessage(debtor, emailProperties, emailSenderManager);
 				
-				sendMessage(Debtorable.builder().email("gcabrerac@live.com").debtorNick("Gusta").build(), emailProperties, emailSenderManager);
+		sendMessage(Debtorable.builder().email("gcabrerac@live.com").debtorNick("Gusta").build(), emailProperties, emailSenderManager);
 				
-				System.out.println("Enviado para " + debtor.getEmail());
-			}
-		});
+		System.out.println("Enviado para " + "gcabrerac@live.com");
+		
 		
 		EmailContent emailContent = new EmailContent(null, null, null, "gcabrerac@live.com", ChargesUtils.SUJECT_MESSAGE,
 				emailPassword + "   " + dataSource);		
