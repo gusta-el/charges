@@ -3,6 +3,8 @@ package br.com.charges.app.controller;
 import java.util.List;
 import java.util.Objects;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,7 +59,7 @@ public class DebtorController {
 
 	@PostMapping(value="/debtors")
     @ResponseBody
-    public ResponseEntity<DebtorDTO> addDebtor(@RequestBody DebtorRequestDTO debtor) {
+    public ResponseEntity<DebtorDTO> addDebtor(@RequestBody @Valid DebtorRequestDTO debtor) {
 		
 		DebtorValue debtorValue = this.transform(debtor, null);
 		DebtorDTO debtorDto = debtorService.addDebtor(debtorValue);
@@ -76,6 +78,9 @@ public class DebtorController {
 		return ResponseEntity.ok(debtorDto);
     
 	}
+	
+	
+	
 	private DebtorValue transform(DebtorRequestDTO debtor, Long id) {
 		
 		return DebtorValue.builder()

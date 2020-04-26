@@ -31,31 +31,21 @@ public class ChargeSchedule {
 
 	@Value("${email.password}")
 	String emailPassword;
-
-	@Value("${spring.datasource.url}")
-	String dataSource;
-
 	
-	@Scheduled(cron = "0,30 0-59 * * * ?")
+	@Scheduled(cron = "0 0 12 27 * ?")
 	public void charge() throws MessagingException {
 
 		EmailProperties emailProperties = new EmailProperties(EmailPropertiesConstants.LIVE.getHost(),
 				EmailPropertiesConstants.LIVE.getPort(), emailAdress, emailPassword);
 		EmailSenderManager emailSenderManager = new EmailSenderManager();
 
-		//Stream<Debtorable> debtors = chargesService.execute();
-		
-		//sendMessage(debtor, emailProperties, emailSenderManager);
-				
-		//sendMessage(Debtorable.builder().email("gcabrerac@live.com").debtorNick("Gusta").build(), emailProperties, emailSenderManager);
-				
-		System.out.println("Enviado para " + "gcabrerac@live.com");
-		
-		
-		EmailContent emailContent = new EmailContent(null, null, null, "gcabrerac@live.com", ChargesUtils.SUJECT_MESSAGE,
-				emailPassword + "   " + dataSource);		
-		//emailSenderManager.send(emailProperties, emailContent);
-		
+		Stream<Debtorable> debtors = chargesService.execute();
+		debtors.forEach(debtor -> {
+			if(!debtor.getDebts().isEmpty()) {	
+				sendMessage(debtor, emailProperties, emailSenderManager);
+				System.out.println("Enviado para " + debtor.getEmail());
+			}
+		});		
 		
 	}
 	
@@ -67,7 +57,7 @@ public class ChargeSchedule {
 		final StringBuilder message = new StringBuilder();
 		message.append(nickName + ChargesUtils.BODY_MESSAGE);
 
-		//debtor.getDebts().forEach(debt -> message.append(this.extractDebt(debt) + "\n"));
+		debtor.getDebts().forEach(debt -> message.append(this.extractDebt(debt) + "\n"));
 
 		EmailContent emailContent = new EmailContent(null, null, null, toAddresTo, ChargesUtils.SUJECT_MESSAGE,
 				message.toString());

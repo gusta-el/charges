@@ -6,6 +6,7 @@ public class ChargesUtils {
 			+ "Passando aqui pra lembrar dos valores que vc tem que me pagar:\n\n";
 	
 	public static final String SUJECT_MESSAGE = "LEMBRETE DO GUS :)";
+	public static final Boolean PAID = true;
 	
 	
 }

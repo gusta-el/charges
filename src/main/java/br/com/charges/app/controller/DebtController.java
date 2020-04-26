@@ -76,7 +76,7 @@ public class DebtController {
 		return ResponseEntity.ok(debtDto);
     
 	}
-	
+		
 	private DebtValue transform(DebtRequestDTO debt, Long debtId) {
 		
 		return DebtValue.builder()
