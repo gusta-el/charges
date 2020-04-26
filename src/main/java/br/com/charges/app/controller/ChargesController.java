@@ -21,7 +21,7 @@ public class ChargesController{
 	@GetMapping
     @ResponseBody
     public String validate() {
-		return "Seu barriga no ar!!";
+		return "Seu Barriga no ar!!";
     }
 	
 	@PutMapping
