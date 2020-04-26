@@ -7,5 +7,6 @@ import br.com.charges.app.model.Debtorable;
 public interface ChargesService {
 
 	Stream<Debtorable> execute();
-		
+	void pay(Long id);
+	
 }

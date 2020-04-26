@@ -1,7 +1,6 @@
 package br.com.charges.app.dto;
 
-import java.math.BigDecimal;
-import java.sql.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -17,13 +16,20 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @JsonInclude(value = Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = false)
-public class DebtDTO {
-
-	Long debtId;
-	String description;
-	BigDecimal moneyValue;
-	Date dateDebt;
-	Boolean paid;
-	Boolean sendable;
+public class FieldsValidationErrorsDTO {
+	
+	String message;
+	List<Errors> errors;
+	
+	@Builder
+	@Getter
+	@AllArgsConstructor
+	@JsonInclude(value = Include.NON_NULL)
+	@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = false)
+	public static class Errors {
+		
+		String field;
+		String message;
+	}
 
 }
