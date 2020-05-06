@@ -2,6 +2,7 @@ package br.com.charges.app.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.charges.app.service.ChargesService;
 
 @RestController
+@CrossOrigin
 @RequestMapping(path = "charges")
 public class ChargesController{
 	
