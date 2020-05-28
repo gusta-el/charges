@@ -1,5 +1,7 @@
 package br.com.charges.app.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,8 +24,8 @@ public class ChargesController{
 
 	@GetMapping
     @ResponseBody
-    public String validate() {
-		return "Seu Barriga no ar!!";
+    public String validate(HttpServletRequest request) {
+		return "Seu Barriga no ar!!" + request.getRemoteAddr();
     }
 	
 	@PutMapping
